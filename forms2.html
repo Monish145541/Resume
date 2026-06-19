@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<title>Form</title>
+<style>
+body {
+padding: 50px;
+font-family: 'Montserrat', sans-serif;
+}
+.box {
+border: 2px solid black;
+width: 600px;
+padding: 40px;
+}
+h1, h2 {
+font-family: Montserrat;
+}
+.main-layout {
+width: 100%;
+border-collapse: collapse;
+vertical-align: top;
+}
+.main-layout td {
+vertical-align: top;
+padding: 20px;
+}
+.details-table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
+font-size: 14px;
+}
+.details-table th, .details-table td {
+border: 1px solid black;
+padding: 8px;
+text-align: left;
+}
+.details-table th {
+background-color: #f2f2f2;
+}
+.action-btn {
+padding: 3px 8px;
+margin: 2px;
+cursor: pointer;
+}
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+select {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 14px;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+}
+
+#submitBtn {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+
+.group-container {
+    padding: 10px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    max-width: 400px;
+}
+.is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #fff8f8;
+}
+.is-valid {
+    border-color: #198754 !important;
+    background-color: #f8fff9;
+}
+.group-invalid {
+    border: 1px solid #dc3545 !important;
+    background-color: #fff8f8;
+}
+.group-valid {
+    border: 1px solid #198754 !important;
+    background-color: #f8fff9;
+}
+</style>
+</head>
+<body>
+<table class="main-layout">
+<tr>
+<td style="width: 40%;">
+<div class="box">
+<h1 align="center">KONGU COLLEGE STUDENT FORM</h1>
+<hr style="border: none; border-top: 2px dotted black;" />
+<form id="studentForm">
+<div>
+<label><h2>First Name:</h2></label>
+<input type="text" id="firstName"><br><br>
+</div>
+<hr>
+<div>
+<label><h2>Last Name:</h2></label>
+<input type="text" id="lastName"><br><br>
+</div>
+<hr>
+<div>
+<label><h2>Age:</h2></label>
+<input type="number" id="age"><br><br>
+</div>
+<hr>
+<div>
+<label><h2>Gender:</h2></label>
+<div id="genderGroup" class="group-container">
+<input type="radio" name="gender" value="Male">Male<br>
+<input type="radio" name="gender" value="Female">Female<br>
+</div>
+<br>
+</div>
+<hr>
+<div>
+<label><h2>Father's Name:</h2></label>
+<input type="text" id="fatherName"><br><br>
+</div>
+<hr>
+<div>
+<label><h2>Mother's Name:</h2></label>
+<input type="text" id="motherName"><br><br>
+</div>
+<hr>
+<div>
+<label><h2>Phone:</h2></label>
+<input type="tel" id="phone"><br><br>
+</div>
+<hr>
+<div>
+<label><h2>Languages known:</h2></label>
+<div id="languageGroup" class="group-container">
+<input type="checkbox" name="box" value="Tamil">Tamil<br>
+<input type="checkbox" name="box" value="English">English<br>
+<input type="checkbox" name="box" value="Germany">Germany<br>
+<input type="checkbox" name="box" value="Hindi">Hindi<br>
+<input type="checkbox" name="box" value="Japnese">Japnese<br>
+</div>
+<br>
+<hr>
+</div>
+<div>
+<label><h2>Department</h2></label>
+<select id="department">
+<option value="">select Department</option>
+</select>
+<br><br>
+<hr><br>
+<input type="button" id="submitBtn" value="Submit"><br>
+</div>
+</form>
+</div>
+</td>
+<td style="width: 60%;">
+<h2>STUDENT RECORDS BOARD</h2>
+<table class="details-table" id="detailsTable">
+<thead>
+<tr>
+<th>First Name</th>
+<th>Last Name</th>
+<th>Age</th>
+<th>Gender</th>
+<th>Father's Name</th>
+<th>Mother's Name</th>
+<th>Phone</th>
+<th>Languages</th>
+<th>Dept</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="detailsBody">
+</tbody>
+</table>
+</td>
+</tr>
+</table>
+<script>
+const departments = ["cse", "csd", "ece", "eee"];
+const deptSelect = document.getElementById("department");
+departments.forEach(dept => {
+let option = document.createElement("option");
+option.value = dept;
+option.textContent = dept.toUpperCase();
+deptSelect.appendChild(option);
+});
+let studentRecords = [];
+let editIndex = -1;
+document.getElementById("submitBtn").addEventListener("click", function() {
+const genderData = document.querySelector('input[name="gender"]:checked');
+const languageData = [];
+document.querySelectorAll('input[name="box"]:checked').forEach(checkbox => {
+languageData.push(checkbox.value);
+});
+const textFields = ["firstName", "lastName", "age", "fatherName", "motherName", "phone", "department"];
+let isFormValid = true;
+textFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+        el.classList.remove("is-valid");
+        el.classList.add("is-invalid");
+        isFormValid = false;
+    } else {
+        el.classList.remove("is-invalid");
+        el.classList.add("is-valid");
+    }
+});
+const genderBox = document.getElementById("genderGroup");
+if (!genderData) {
+    genderBox.classList.remove("group-valid");
+    genderBox.classList.add("group-invalid");
+    isFormValid = false;
+} else {
+    genderBox.classList.remove("group-invalid");
+    genderBox.classList.add("group-valid");
+}
+const languageBox = document.getElementById("languageGroup");
+if (languageData.length === 0) {
+    languageBox.classList.remove("group-valid");
+    languageBox.classList.add("group-invalid");
+    isFormValid = false;
+} else {
+    languageBox.classList.remove("group-invalid");
+    languageBox.classList.add("group-valid");
+}
+
+if (!isFormValid) {
+    return;
+}
+
+const studentData = {
+firstName: document.getElementById("firstName").value,
+lastName: document.getElementById("lastName").value,
+age: document.getElementById("age").value,
+gender: genderData ? genderData.value : "",
+fatherName: document.getElementById("fatherName").value,
+motherName: document.getElementById("motherName").value,
+phone: document.getElementById("phone").value,
+languages: languageData.join(", "),
+department: deptSelect.value.toUpperCase()
+};
+if (editIndex === -1) {
+studentRecords.push(studentData);
+} else {
+studentRecords[editIndex] = studentData;
+editIndex = -1;
+document.getElementById("submitBtn").value = "Submit";
+}
+renderTable();
+textFields.forEach(id => {
+    document.getElementById(id).classList.remove("is-valid", "is-invalid");
+});
+genderBox.classList.remove("group-valid", "group-invalid");
+languageBox.classList.remove("group-valid", "group-invalid");
+
+document.getElementById("studentForm").reset();
+});
+function renderTable() {
+const tbody = document.getElementById("detailsBody");
+tbody.innerHTML = "";
+studentRecords.forEach((record, index) => {
+const row = document.createElement("tr");
+row.innerHTML = `
+<td>${record.firstName}</td>
+<td>${record.lastName}</td>
+<td>${record.age}</td>
+<td>${record.gender}</td>
+<td>${record.fatherName}</td>
+<td>${record.motherName}</td>
+<td>${record.phone}</td>
+<td>${record.languages}</td>
+<td>${record.department}</td>
+<td>
+<button class="action-btn" onclick="editRecord(${index})">Edit</button>
+<button class="action-btn" onclick="deleteRecord(${index})">Delete</button>
+</td>
+`;
+tbody.appendChild(row);
+});
+}
+function deleteRecord(index) {
+studentRecords.splice(index, 1);
+renderTable();
+}
+function editRecord(index) {
+const record = studentRecords[index];
+editIndex = index;
+document.getElementById("firstName").value = record.firstName;
+document.getElementById("lastName").value = record.lastName;
+document.getElementById("age").value = record.age;
+document.getElementById("fatherName").value = record.fatherName;
+document.getElementById("motherName").value = record.motherName;
+document.getElementById("phone").value = record.phone;
+document.querySelectorAll('input[name="gender"]').forEach(radio => {
+radio.checked = (radio.value === record.gender);
+});
+const checkedLanguages = record.languages.split(", ");
+document.querySelectorAll('input[name="box"]').forEach(checkbox => {
+checkbox.checked = checkedLanguages.includes(checkbox.value);
+});
+deptSelect.value = record.department.toLowerCase();
+document.getElementById("submitBtn").value = "Update";
+["firstName", "lastName", "age", "fatherName", "motherName", "phone", "department"].forEach(id => {
+    document.getElementById(id).classList.remove("is-valid", "is-invalid");
+});
+document.getElementById("genderGroup").classList.remove("group-valid", "group-invalid");
+document.getElementById("languageGroup").classList.remove("group-valid", "group-invalid");
+}
+</script>
+</body>
+</html>
